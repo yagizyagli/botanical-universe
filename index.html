@@ -61,7 +61,7 @@
             </div>
             <div class="control-group">
                 <label>Atmosphere Temperature (°C)</label>
-                <input type="range" id="temperature" min="-10" max="50" value="24" oninput="updateTemperature(this.value)">
+                <input type="range" id="temperature" min="-30" max="50" value="24" oninput="updateTemperature(this.value)">
             </div>
             <div class="control-group">
                 <label>Select Species Group</label>
@@ -69,6 +69,14 @@
                     <option value="standard">Earth Standard (Mesophyte)</option>
                     <option value="xerophyte">Desert Dune (Xerophyte - Cactus)</option>
                     <option value="hydrophyte">Aquatic Basin (Hydrophyte)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Select Planetary Sector</label>
+                <select id="planet-select" onchange="changePlanet(this.value)">
+                    <option value="earth">Sector Terra (Earth - 1G)</option>
+                    <option value="mars">Sector Ares (Mars - 0.38G)</option>
+                    <option value="moon">Sector Luna (The Moon - 0.16G)</option>
                 </select>
             </div>
         </aside>
