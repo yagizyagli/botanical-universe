@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botanical-Universe: Cosmic Flora Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- LEFT PANEL: ECO-SYSTEM & VITAL BIOMETRICS -->
+        <aside class="panel left-panel">
+            <h2>🔬 Cosmic Vital Signs</h2>
+            <div class="stat-group">
+                <label>Glucose Energy (Biomass): <span id="val-glucose">100</span>%</label>
+                <div class="bar"><div id="bar-glucose" class="fill" style="width: 100%"></div></div>
+            </div>
+            <div class="stat-group">
+                <label>Osmotic Water Level: <span id="val-water">50</span>%</label>
+                <div class="bar"><div id="bar-water" class="fill water" style="width: 50%"></div></div>
+            </div>
+            <div class="stat-group">
+                <label>Microscopic Stomata: <span id="val-stomata">Closed</span></label>
+                <div class="bar"><div id="bar-stomata" class="fill stomata" style="width: 0%"></div></div>
+            </div>
+            <div class="stat-group">
+                <label>Transpiration Rate: <span id="val-transpiration">0</span> ml/hr</label>
+            </div>
+            <div class="stat-group">
+                <label>O2/CO2 Gas Balance: <span id="val-gas-ratio">Stable</span></label>
+            </div>
+            <div class="stat-group">
+                <label>Auxin Hormone Level: <span id="val-auxin">1.0</span></label>
+            </div>
+            <div class="info-box">
+                <h3>🛰️ Mission Control Info</h3>
+                <p id="info-text">Cosmic greenhouse initialized. Adjust planetary environment controls to stimulate core botanical cycles.</p>
+            </div>
+        </aside>
+
+        <!-- CENTER AREA: INTERACTIVE CANVAS SIMULATOR -->
+        <main class="simulation-area">
+            <div class="badge" id="current-season">Planetary Cycle: Spring Growth</div>
+            <canvas id="simCanvas"></canvas>
+        </main>
+
+        <!-- RIGHT PANEL: PLANETARY ENVIRONMENTAL CONTROLS -->
+        <aside class="panel right-panel">
+            <h2>🎛️ Orbit Controls</h2>
+            <div class="control-group">
+                <label>Diurnal Cycle (Day/Night)</label>
+                <button id="btn-time" onclick="toggleTime()">Day Phase</button>
+            </div>
+            <div class="control-group">
+                <label>Star Light Angle (Phototropism)</label>
+                <input type="range" id="light-angle" min="-45" max="45" value="0" oninput="updateLightAngle(this.value)">
+            </div>
+            <div class="control-group">
+                <label>Regolith Moisture (Osmosis)</label>
+                <input type="range" id="soil-moisture" min="0" max="100" value="50" oninput="updateSoilMoisture(this.value)">
+            </div>
+            <div class="control-group">
+                <label>Atmosphere Temperature (°C)</label>
+                <input type="range" id="temperature" min="-10" max="50" value="24" oninput="updateTemperature(this.value)">
+            </div>
+            <div class="control-group">
+                <label>Select Species Group</label>
+                <select id="species-select" onchange="changeSpecies(this.value)">
+                    <option value="standard">Earth Standard (Mesophyte)</option>
+                    <option value="xerophyte">Desert Dune (Xerophyte - Cactus)</option>
+                    <option value="hydrophyte">Aquatic Basin (Hydrophyte)</option>
+                </select>
+            </div>
+        </aside>
+    </div>
+
+    <script src="plantEngine.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
