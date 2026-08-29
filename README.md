@@ -20,25 +20,26 @@ If you like this project or find it helpful, please consider giving it a **Star*
 
 ## 🏗️ Architecture & Project Structure
 
-The project follows a modular and scalable architectural pattern to separate business logic, user interface, and data management.
+The engine runs entirely client-side on a highly-optimized, modular mathematical model mimicking real cosmic plant thermodynamics and cellular simulations.
 
 ```text
 botanical-universe/
-├── 📂 assets/          # Cosmic UI elements, plant icons, and sound effects
-├── 📂 core/            # App configurations, constants, and theme settings
-├── 📂 data/            # Data sources (Local DB, API service) and models (Plant, User)
-├── 📂 domain/          # Business logic, repositories, and use cases
-└── 📂 presentation/    # UI Screens (GalaxyMap, Greenhouse, Quiz) and state management
+├── index.html         # Cosmic laboratory interface and environmental control panel
+├── style.css          # Futuristic deep-space sci-fi UI styling
+├── plantEngine.js     # The core biological simulation engine (Photosynthesis, Osmosis, Tropism)
+└── app.js             # Visual renderer, particle system, and animation loop connectors
 ```
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Frontend / Game Engine:** [Unity, Flutter, React Native, Godot]
-* **Backend / Database:** [Firebase, Node.js, SQLite]
+*   **Core Engine:** Vanilla JavaScript (ES6+ Class-driven modular design)
+*   **Visuals & Rendering:** HTML5 Canvas API (Vectorial particle physics math)
+*   **Interface:** Modern Cyberpunk/Sci-Fi themed CSS3 Grid & Flexbox
+*   **Distribution:** Desktop standalone ready via Electron.js wrapper
 
----
+------------------------
 
 ## 📦 Installation & Setup
 
