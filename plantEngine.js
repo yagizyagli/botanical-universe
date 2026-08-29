@@ -7,8 +7,16 @@ class PlantEngine {
             hydrophyte: { name: "Aquatic Basin", waterConsumption: 0.40, tempOptimum: 20, maxStomata: 150, metabolicRate: 1.5 }
         };
 
+        // --- PLANETARY ATMOSPHERE CONFIGURATIONS ---
+        this.planetConfig = {
+            earth: { name: "Sector Terra", gravity: 1.0, baseTemp: 24, baseMoisture: 50, gasAilment: "STABLE", bgGradient: ["#111c30", "#05070f"] },
+            mars: { name: "Sector Ares", gravity: 0.38, baseTemp: -20, baseMoisture: 10, gasAilment: "THIN CO2 ECOSYSTEM", bgGradient: ["#2d1410", "#0a0302"] },
+            moon: { name: "Sector Luna", gravity: 0.16, baseTemp: -40, baseMoisture: 0, gasAilment: "VACUUM ANOMALY", bgGradient: ["#0e1118", "#000000"] }
+        };
+
         // --- REAL-TIME BIOLOGICAL STATES ---
         this.currentSpecies = "standard";
+        this.currentPlanet = "earth";
         this.glucose = 100;        // Glucose Energy (%)
         this.water = 50;          // Intracellular water level (%)
         this.stomataOpen = 0;     // Stomatal aperture (%)
@@ -28,62 +36,59 @@ class PlantEngine {
     // --- MAIN BIOLOGICAL SIMULATION STEP CYCLE ---
     update() {
         const config = this.speciesConfig[this.currentSpecies];
+        const planet = this.planetConfig[this.currentPlanet];
+
+        // COSMIC ENVIRONMENTAL ENVIRONMENT IMPACTS
+        if (this.currentPlanet !== "earth") {
+            this.gasRatio = planet.gasAilment;
+            this.glucose -= 0.04; // Atmospheric stress burns extra glucose reserves
+        }
 
         // ENGINE CYCLE 1: OSMOSIS AND ROOT WATER ABSORPTION
-        // Water is drawn via osmotic pressure if soil moisture is higher than internal plant water
         let waterAbsorption = (this.soilMoisture - this.water) * 0.05 * config.metabolicRate;
         this.water += waterAbsorption;
         
         // ENGINE CYCLE 2: MICROSCOPIC STOMATA MECHANISM & TRANSPIRATION
-        // Plant clamps stomata shut under extreme heat or dehydration to conserve internal moisture
-        if (this.temperature > config.tempOptimum + 10 || this.water < 25 || !this.isDay) {
-            // Defensive Mode: Stomata closing
-            this.stomataOpen += (0 - this.stomataOpen) * 0.1;
+        if (this.temperature > config.tempOptimum + 10 || this.temperature < 0 || this.water < 25 || !this.isDay || this.currentPlanet === "moon") {
+            this.stomataOpen += (0 - this.stomataOpen) * 0.1; // Clamping shut due to anomalies
         } else {
-            // Active Mode: Stomata opening for cellular carbon dioxide gas exchange
             this.stomataOpen += (config.maxStomata - this.stomataOpen) * 0.1;
         }
 
-        // Transpiration: Water evaporates rapidly as temperature rises and stomata open wide
-        this.transpiration = (this.stomataOpen / 100) * (this.temperature / 10) * config.waterConsumption;
+        this.transpiration = (this.stomataOpen / 100) * (this.temperature > 0 ? this.temperature / 10 : 0.1) * config.waterConsumption;
         this.water -= this.transpiration;
-        
-        // Clamp biological thresholds
         this.water = Math.max(0, Math.min(100, this.water));
 
-        // ENGINE CYCLE 3: PHOTOSYNTHESIS VS CELLULAR RESPIRATION (GAS & ENERGY EXCHANGE)
-        if (this.isDay) {
-            // DAY PHASE: Photosynthesis is online. Star light, water, and incoming CO2 produce glucose.
+        // ENGINE CYCLE 3: PHOTOSYNTHESIS VS CELLULAR RESPIRATION
+        if (this.isDay && this.currentPlanet !== "moon") {
             if (this.water > 10 && this.stomataOpen > 5) {
                 let lightEfficiency = Math.cos(this.lightAngle * Math.PI / 180);
-                let photoRate = lightEfficiency * (this.stomataOpen / 100) * 0.2 * config.metabolicRate;
+                let planetModifier = this.currentPlanet === "mars" ? 0.6 : 1.0; // Reduced solar input on Mars
+                let photoRate = lightEfficiency * (this.stomataOpen / 100) * 0.2 * config.metabolicRate * planetModifier;
                 this.glucose += photoRate;
-                this.gasRatio = "O2 EMISSION (PHOTOSYNTHESIS)";
+                if (this.currentPlanet === "earth") this.gasRatio = "O2 EMISSION (PHOTOSYNTHESIS)";
             } else {
-                this.gasRatio = "PHOTOSYNTHESIS STALLED (LOW WATER/CO2)";
+                this.gasRatio = "PHOTOSYNTHESIS STALLED";
             }
         } else {
-            // NIGHT PHASE: Photosynthesis offline. Cellular respiration burns glucose reserves, emitting CO2.
             this.glucose -= 0.05 * config.metabolicRate;
-            this.gasRatio = "CO2 EMISSION (RESPIRATION)";
+            if (this.currentPlanet === "earth") this.gasRatio = "CO2 EMISSION (RESPIRATION)";
         }
 
-        // Vital critical check: Total biomass collapse if glucose hits zero
         if (this.glucose <= 0) this.glucose = 0;
         if (this.glucose > 100) this.glucose = 100;
 
         // ENGINE CYCLE 4: HORMONAL DIRECTIONAL MOTION (PHOTOTROPISM & HYDROTROPISM)
-        // Calculates asymmetric Auxin hormone distribution based on star light angles
         if (this.isDay) {
-            // Auxin migrates to the shaded side, elongating cells and bending the stem toward the star
             this.auxin = 1.0 + (this.lightAngle / 45);
-            let targetAngle = -this.lightAngle; // Bending toward the light vector
+            let targetAngle = -this.lightAngle; 
             this.stemAngle += (targetAngle - this.stemAngle) * 0.05;
         }
 
-        // Hydrotropism: Root systems expand and deepen depending on planetary regolith moisture
+        // Low gravity impacts directional root structuring anchoring speed
+        let gravityModifier = planet.gravity;
         if (this.soilMoisture > 10) {
-            this.rootDepth += (40 + (this.soilMoisture * 0.6) - this.rootDepth) * 0.02;
+            this.rootDepth += ((40 + (this.soilMoisture * 0.6)) * gravityModifier - this.rootDepth) * 0.02;
         }
 
         this.updateUI();
@@ -105,21 +110,37 @@ class PlantEngine {
         document.getElementById("val-gas-ratio").innerText = this.gasRatio;
         document.getElementById("val-auxin").innerText = this.auxin.toFixed(2);
 
-        // Dynamic System Status Message Logic
         let info = document.getElementById("info-text");
-        if (this.glucose <= 20) {
+        if (this.glucose <= 0) {
+            info.innerText = "💀 CRITICAL SYSTEM FAILURE: Total biomass decay. Cellular structures collapsed.";
+        } else if (this.currentPlanet === "moon") {
+            info.innerText = "🌌 LUNA ANOMALY: Complete vacuum. No atmospheric pressure detected. Stomata locked, photosynthesis impossible.";
+        } else if (this.currentPlanet === "mars" && this.glucose < 40) {
+            info.innerText = "🚀 MARS MISSION CRISIS: Freezing temperatures and thin atmosphere forcing defensive starvation metabolism.";
+        } else if (this.glucose <= 20) {
             info.innerText = "🚨 WARNING: Critical biomass drop! Metabolic failure imminent. Increase light or adjust temperature.";
         } else if (this.water <= 20) {
             info.innerText = "🍂 ALERT: Dehydration detected. Stomata clamped shut to prevent fatal transpiration.";
         } else if (!this.isDay) {
             info.innerText = "🌌 Night Mode active. Photosynthesis offline. Cellular respiration is consuming glucose reserves.";
-        } else if (Math.abs(this.lightAngle) > 25) {
-            info.innerText = "☀️ Phototropism active. Auxin hormones migrating to the shaded side, bending the stem toward the star light.";
         } else {
-            info.innerText = "✅ Stable Orbit. All botanical lifecycles functioning within nominal cosmic parameters.";
+            info.innerText = `✅ Secure Orbit [${this.planetConfig[this.currentPlanet].name}]. Universal plant engine operates within safe biological margins.`;
         }
     }
 }
 
-// Global engine engine instance allocation
+// Global engine instance allocation
 window.plantEngine = new PlantEngine();
+
+window.changePlanet = function(val) {
+    window.plantEngine.currentPlanet = val;
+    const planet = window.plantEngine.planetConfig[val];
+    
+    window.plantEngine.temperature = planet.baseTemp;
+    window.plantEngine.soilMoisture = planet.baseMoisture;
+    
+    document.getElementById("temperature").value = planet.baseTemp;
+    document.getElementById("soil-moisture").value = planet.baseMoisture;
+    
+    if(window.updateCanvasBackground) window.updateCanvasBackground(planet.bgGradient);
+};
