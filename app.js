@@ -1,12 +1,18 @@
 const canvas = document.getElementById("simCanvas");
 const ctx = canvas.getContext("2d");
 
+// --- SMART MOBILE RESPONSIVE CANVAS RESIZER ---
 function resizeCanvas() {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
+    const parent = canvas.parentElement;
+    // Use getBoundingClientRect to bypass flex/block calculation bugs on mobile Safari & Chrome
+    const rect = parent.getBoundingClientRect();
+    
+    canvas.width = rect.width || parent.clientWidth;
+    canvas.height = rect.height || parent.clientHeight;
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+
 
 let currentBgColors = ["#111c30", "#05070f"];
 window.updateCanvasBackground = function(colors) {
