@@ -208,10 +208,12 @@ input[type="range"]::-webkit-slider-thumb {
 
     .simulation-area {
         width: 100%;
-        height: 50vh; /* Lock simulation viewport height on mobile screens */
+        height: 45vh; /* Set a solid height for the space lab view on mobile */
         min-height: 350px;
-        order: -1; /* Pushes the canvas game screen to the top on mobile views */
+        order: -1; 
+        display: flex; /* Forces child elements to respect boundaries */
     }
+
 
     .badge {
         top: 10px;
