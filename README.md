@@ -64,7 +64,8 @@ botanical-universe/
 
 ## ✍️ Author
 
-* **Yağız Yağlı** - [@yagizyagli](https://github.com/yagizyagli)
+* **Yağız Yağlı** [@yagizyagli](https://github.com/yagizyagli)
+* **Live Demo**   [botanical-universe](https://yagizyagli.github.io/botanical-universe/)
 
 ---
 
